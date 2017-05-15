@@ -9,6 +9,7 @@ Files below were created by group. Last two files were from hybridauth and edite
 * data.php
 * pref.php
 * function.php
+* ajax.php
 * assets folder
 * logout.php
 * login.php
