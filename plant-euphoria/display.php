@@ -111,36 +111,7 @@ $user_ip = $_SERVER['REMOTE_ADDR'];
 						}
 					?>
 				        </h2>                
-            </div> 
-        
-        <script>
-        $(function(){ 
-            var plantID = <?php echo $plant_ID;  ?>; 
-
-            $('.like-btn').click(function(){
-                $('.dislike-btn').removeClass('dislike-h');    
-                $(this).addClass('like-h');
-                $.ajax({
-                    type:'POST',
-                    url:'ajax.php',
-                    data:'act=like&plantID='+plantID,
-                    success: function(){
-                    }
-                });
-            });
-            $('.dislike-btn').click(function(){
-                $('.like-btn').removeClass('like-h');
-                $(this).addClass('dislike-h');
-                $.ajax({
-                    type:'POST',
-                    url:'ajax.php',
-                    data:'act=dislike&plantID='+plantID,
-                    success: function(){
-                    }
-                });
-            });        
-        });
-    </script>
+            </div>
             
     <div class="container-fluid" >
         <div class="row">
@@ -364,6 +335,35 @@ $user_ip = $_SERVER['REMOTE_ADDR'];
             <p class="copyright">Plant Euphoria</p>
         </footer>
     </div>
+	
+        <script>
+        $(function(){ 
+            var plantID = <?php echo $plant_ID;  ?>; 
+
+            $('.like-btn').click(function(){
+                $('.dislike-btn').removeClass('dislike-h');    
+                $(this).addClass('like-h');
+                $.ajax({
+                    type:'POST',
+                    url:'ajax.php',
+                    data:'act=like&plantID='+plantID,
+                    success: function(){
+                    }
+                });
+            });
+            $('.dislike-btn').click(function(){
+                $('.like-btn').removeClass('like-h');
+                $(this).addClass('dislike-h');
+                $.ajax({
+                    type:'POST',
+                    url:'ajax.php',
+                    data:'act=dislike&plantID='+plantID,
+                    success: function(){
+                    }
+                });
+            });        
+        });
+    </script>
     
     <section class="testimonials" style="padding:-1px;margin: 0px;">    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
