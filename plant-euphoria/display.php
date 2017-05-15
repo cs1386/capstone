@@ -9,7 +9,8 @@ if (isset($_REQUEST['hauth_start']) || isset($_REQUEST['hauth_done'])) {
     Hybrid_Endpoint::process();
 }
 session_start();
-include ("function.php")
+include ("function.php");
+$user_ip = $_SERVER['REMOTE_ADDR'];
 ?>
 
 <!DOCTYPE html>
@@ -22,6 +23,8 @@ include ("function.php")
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/lumen/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,400italic">
     <link rel="stylesheet" href="assets/css/styles.min.css">
+    <link rel="stylesheet" href="assets/css/button.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     // share buttons using sharethis
     <script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=5915067c889e1c0011156239&product=sticky-share-buttons"></script>
 
@@ -110,7 +113,35 @@ include ("function.php")
 				        </h2>                
             </div> 
         
+        <script>
+        $(function(){ 
+            var plantID = <?php echo $plant_ID;  ?>; 
 
+            $('.like-btn').click(function(){
+                $('.dislike-btn').removeClass('dislike-h');    
+                $(this).addClass('like-h');
+                $.ajax({
+                    type:'POST',
+                    url:'ajax.php',
+                    data:'act=like&plantID='+plantID,
+                    success: function(){
+                    }
+                });
+            });
+            $('.dislike-btn').click(function(){
+                $('.like-btn').removeClass('like-h');
+                $(this).addClass('dislike-h');
+                $.ajax({
+                    type:'POST',
+                    url:'ajax.php',
+                    data:'act=dislike&plantID='+plantID,
+                    success: function(){
+                    }
+                });
+            });        
+        });
+    </script>
+            
     <div class="container-fluid" >
         <div class="row">
 
@@ -211,6 +242,69 @@ include ("function.php")
                     <div class="col-md-3"></div>
                     </div>
             
+                                <?php
+                    
+                            function percent($num, $total)
+                            {
+                                return number_format((100.0*$num)/$total, 2);
+                            }
+
+                            $dislike_sql = "SELECT COUNT(*) as num FROM likes WHERE ip = '" .$user_ip . "' and plantID = '" . $plant_ID . "' and dislike = 1";
+                            //$result = mysqli_query($link, $dislike_sql);
+                            $dislike_count = mysqli_fetch_array(mysqli_query($link, $dislike_sql));
+                            $dislike_count = $dislike_count['num'];
+
+                            $like_sql = "SELECT COUNT(*) as num FROM likes WHERE ip = '" . $user_ip . "' and plantID = '" . $plant_ID . "' and likes = 1";
+                            $like_count = mysqli_fetch_array(mysqli_query($link, $like_sql));
+                            $like_count = $like_count['num'];
+                        
+                            $sql = "SELECT COUNT(*) as num FROM likes WHERE plantID = '" . $plant_ID . "'";
+                            $rate_all_count = mysqli_fetch_array(mysqli_query($link, $sql));
+                            $rate_all_count = $rate_all_count['num'];
+                            
+                            $sql = "SELECT COUNT(*) as num FROM likes WHERE plantID = '" . $plant_ID . "' and likes = 1";
+                            $rate_like_count = mysqli_fetch_array(mysqli_query($link, $sql));
+                            $rate_like_count = $rate_like_count['num'];
+                            $rate_like_percent = percent($rate_like_count, $rate_all_count);                            
+
+                            $sql = "SELECT COUNT(*) as num FROM likes WHERE plantID = '" . $plant_ID . "' and dislike = 1";
+                            $rate_dislike_count = mysqli_fetch_array(mysqli_query($link, $sql));
+                            $rate_dislike_count = $rate_dislike_count['num'];
+                            $rate_dislike_percent = percent($rate_dislike_count, $rate_all_count);
+            
+                    ?>
+
+                    <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6 text-center">
+                        
+                    
+                        <div class='like-btn 
+                                <?php if($like_count == 1) { 
+                                    echo "like-h";
+                                    } ?>
+                                '>Like</div>    
+
+                        <div class='dislike-btn 
+                                    <?php if($dislike_count == 1){ 
+                                        echo "dislike-h";
+                                        } ?>
+                                    '></div>
+                    <div class="stat-cnt">
+                    <div class="rate-count"><?php echo $rate_all_count; ?></div>
+                    <div class="stat-bar">
+                        <div class="bg-green" style="width:<?php echo $rate_like_percent; ?>%;"></div>
+                        <div class="bg-red" style="width:<?php echo $rate_dislike_percent; ?>%"></div>
+                    </div><!-- stat-bar -->
+                    <div class="dislike-count"><?php echo $rate_dislike_count; ?></div>
+                    <div class="like-count"><?php echo $rate_like_count; ?></div>
+                    </div>
+                    
+                        
+                    </div>
+                    <div class="col-md-3"></div>
+                    </div>            
+            
                     
             </div>
 
@@ -272,7 +366,6 @@ include ("function.php")
     </div>
     
     <section class="testimonials" style="padding:-1px;margin: 0px;">    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
         
 </body>
